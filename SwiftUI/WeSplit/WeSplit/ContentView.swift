@@ -54,6 +54,8 @@ struct ContentView: View {
                 
                 Section(header: Text("Grand total")) {
                     Text("$\(grandTotal, specifier: "%.2f")")
+                    // adding conditional modifier as per project 3
+                        .foregroundColor(tipPercentage == 4 ? .red : .black)
                 }
                 
                 Section(header: Text("Amount per person")) {
