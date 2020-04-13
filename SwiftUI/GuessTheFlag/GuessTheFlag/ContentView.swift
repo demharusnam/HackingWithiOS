@@ -14,6 +14,10 @@ struct ContentView: View {
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled()
     @State private var correctAnswer = Int.random(in: 0...2)
     @State private var score: Int = 0
+    // state variables added as per project 6
+    @State private var animate = false
+    @State private var incorrect = false
+    @State private var angle = 0.0
     
     var body: some View {
         ZStack {
@@ -32,17 +36,31 @@ struct ContentView: View {
                 
                 ForEach(0 ..< 3) { number in
                     Button(action: {
+                        // added as per project 6
+                        if (number == self.correctAnswer) {
+                            self.angle = 360
+                        } else {
+                            self.incorrect = true
+                        }
+                        self.animate = true
+                        
                         self.flagTapped(number)
                     }) {
                         // implementing FlagImage() view as per project 3
                         FlagImage(country: self.countries[number])
-                        
-                        /*Image(self.countries[number])
+                        /*
+                        Image(self.countries[number])
                             .renderingMode(.original)
                             .clipShape(Capsule())
                             .overlay(Capsule().stroke(Color.black, lineWidth: 1))
-                            .shadow(color: .black, radius: 2)*/
+                            .shadow(color: .black, radius: 2)
+                         */
                     }
+                    // modifiers added as per project 6
+                    .rotation3DEffect(.degrees(number == self.correctAnswer ? self.angle : 0), axis: (x: 0, y: 1, z: 0))
+                    .opacity(number != self.correctAnswer && self.animate ? 0.25 : 1)
+                    .scaleEffect(self.incorrect && number == self.correctAnswer ? 1.33 : 1)
+                    .animation(self.animate ? .default : nil)
                 }
                 
                 Spacer()
@@ -60,6 +78,11 @@ struct ContentView: View {
         }
         .alert(isPresented: $showingScore) {
             Alert(title: Text(scoreTitle), message: Text("Your score is \(score)"), dismissButton: .default(Text("Continue")) {
+                    // added state variables reset as per project 6
+                    self.angle = 0
+                    self.animate = false
+                    self.incorrect = false
+                
                     self.askQuestion()
             })
         }
@@ -96,6 +119,8 @@ struct FlagImage: View {
             .shadow(color: .black, radius: 2)
     }
 }
+
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
