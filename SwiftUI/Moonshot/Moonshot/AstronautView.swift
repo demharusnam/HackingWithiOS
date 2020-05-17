@@ -26,6 +26,8 @@ struct AstronautView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: geometry.size.width)
+                        // added as per Chapter 15: Accessibility challenge
+                        .accessibility(label: Text("\(self.astronaut.name)"))
                     
                     HStack {
                         Text("Missions Flown:")

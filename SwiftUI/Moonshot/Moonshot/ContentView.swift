@@ -22,6 +22,8 @@ struct ContentView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 44, height: 44)
+                        // added as per Chapter 15: Accessibility challenge
+                        .accessibility(label: Text("\(mission.displayName)"))
                     
                     VStack(alignment: .leading) {
                         Text(mission.displayName)

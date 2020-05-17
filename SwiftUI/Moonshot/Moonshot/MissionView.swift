@@ -26,6 +26,8 @@ struct MissionView: View {
                         .scaledToFit()
                         .frame(maxWidth: geometry.size.width * 0.7)
                         .padding(.top)
+                        // added as per Chapter 15: Accessibility challenge
+                        .accessibility(label: Text("\(self.mission.displayName)"))
                     
                     Text("\(self.mission.formattedLaunchDate)")
                         .foregroundColor(.secondary)
@@ -40,6 +42,8 @@ struct MissionView: View {
                                     .frame(width: 83, height: 60)
                                     .clipShape(Circle())
                                     .overlay(Circle().stroke(Color.primary, lineWidth:  1))
+                                    // added as per Chapter 15: Accessibility challenge
+                                    .accessibility(label: Text("\(crewMember.astronaut.name)"))
                                 
                                 VStack(alignment: .leading) {
                                     Text(crewMember.astronaut.name)

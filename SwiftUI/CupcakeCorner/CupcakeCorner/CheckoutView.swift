@@ -25,7 +25,8 @@ struct CheckoutView: View {
         GeometryReader { geo in
             ScrollView {
                 VStack {
-                    Image("cupcakes")
+                    // modified Image to decorative as per Chapter 15: Accessibility challenge
+                    Image(decorative: "cupcakes")
                         .resizable()
                         .scaledToFit()
                         .frame(width: geo.size.width)
