@@ -18,16 +18,20 @@ struct MissionView: View {
     let astronauts: [CrewMember]
     
     var body: some View {
-        GeometryReader { geometry in
+        GeometryReader { fullView in
             ScrollView(.vertical) {
                 VStack {
-                    Image(self.mission.image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: geometry.size.width * 0.7)
-                        .padding(.top)
-                        // added as per Chapter 15: Accessibility challenge
-                        .accessibility(label: Text("\(self.mission.displayName)"))
+                    // Modified as per chapter 18: Layout and Geometry
+                    GeometryReader { geo in
+                        Image(self.mission.image)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: fullView.size.width)
+                            .padding(.top)
+                            .scaleEffect(geo.frame(in: .global).maxY / fullView.size.width, anchor: .bottom)
+                            // added as per Chapter 15: Accessibility challenge
+                            .accessibility(label: Text("\(self.mission.displayName)"))
+                    }.frame(height: fullView.size.width * 0.7)
                     
                     Text("\(self.mission.formattedLaunchDate)")
                         .foregroundColor(.secondary)

@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var usedWords = [String]()
+    @State private var usedWords = Array.init(repeating: "Test", count: 30)//[String]()
     @State private var rootWord = ""
     @State private var newWord = ""
     
@@ -26,15 +26,22 @@ struct ContentView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
                     .autocapitalization(.none)
-                
-                List(usedWords, id: \.self) { word in
-                    // added as per Chapter 15: Accessibility
-                    HStack {
-                        Image(systemName: "\(word.count).circle")
-                        Text(word)
+                // modified as per Chapter 18: Layout and Geometry challenges
+                GeometryReader { listView in
+                    List(self.usedWords.indices, id: \.self) { index in
+                        GeometryReader { geo in
+                            HStack {
+                                Image(systemName: "\(self.usedWords[index].count).circle")
+                                    .foregroundColor(Color(red: 0, green: Double(geo.frame(in: .global).minY / listView.size.height), blue: 0))
+                                Text(self.usedWords[index])
+                            }
+                            .frame(width: geo.size.width, alignment: .leading)
+                            .slideIn(index: index, maxElementsInView: listView.size.height / (geo.size.height + 15), rectInGlobal: geo.frame(in: .global), parentSize: listView.size)
+                            // added as per Chapter 15: Accessibility challenge
+                            .accessibilityElement(children: .ignore)
+                            .accessibility(label: Text("\(self.usedWords[index]), \(self.usedWords[index].count) letters"))
+                        }
                     }
-                    .accessibilityElement(children: .ignore)
-                    .accessibility(label: Text("\(word), \(word.count) letters"))
                 }
                 
                 Text("Score: \(score)")
@@ -84,7 +91,7 @@ struct ContentView: View {
             if let startWords = try? String(contentsOf: startWordsURL) {
                 let allWords = startWords.components(separatedBy: "\n")
                 rootWord = allWords.randomElement() ?? "silkworm"
-                usedWords.removeAll()
+                //usedWords.removeAll()
                 score = 0
                 return
             }
@@ -132,5 +139,15 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+    }
+}
+
+extension View {
+    func slideIn(index: Int, maxElementsInView: CGFloat, rectInGlobal item: CGRect, parentSize: CGSize) -> some View {
+        let maxElements = Int(floor(Double(maxElementsInView)))
+        let dx = (item.minY - parentSize.height) / 3
+        let slideIn = Int(dx < 0 ? 0 : dx)
+        let offset = index <= maxElements ? CGSize.zero : CGSize(width: slideIn, height: 0)
+        return self.offset(offset)
     }
 }
